@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import TensorDataset, DataLoader
+from copy import deepcopy as deepcopy
 
 import numpy as np
 
@@ -16,6 +17,7 @@ class BaseModelTorch(BaseModel):
         super().__init__(params, args)
         self.device = self.get_device()
         self.gpus = args.gpu_ids if args.use_gpu and torch.cuda.is_available() and args.data_parallel else None
+        self.gce = args.gce
 
     def to_device(self):
         if self.args.data_parallel:
@@ -25,20 +27,40 @@ class BaseModelTorch(BaseModel):
         self.model.to(self.device)
 
     def get_device(self):
-        if self.args.use_gpu and torch.cuda.is_available():
-            if self.args.data_parallel:
-                device = "cuda"  # + ''.join(str(i) + ',' for i in self.args.gpu_ids)[:-1]
-            else:
-                device = 'cuda'
-        else:
-            device = 'cpu'
+        device = 'cuda'
+        # if self.args.use_gpu and torch.cuda.is_available():
+        #     if self.args.data_parallel:
+        #         device = "cuda"  # + ''.join(str(i) + ',' for i in self.args.gpu_ids)[:-1]
+        #     else:
+        #         device = 'cuda'
+        # else:
+        #     device = 'cpu'
 
         return torch.device(device)
 
-    def fit(self, X, y, X_val=None, y_val=None):
+    def fit(self, oldX, y, X_val=None, y_val=None):
+
+        column_count = len(oldX[0])
+
+
         optimizer = optim.AdamW(self.model.parameters(), lr=self.params["learning_rate"])
 
-        X = torch.tensor(X).float()
+        X = torch.tensor(oldX).float()
+        print(self.model)
+        # print("====================")
+        # print("====================")
+        # print("====================")
+        # print("====================")
+        # print(type(X))
+        # print("====================")
+        # print("======column_count==========")
+        # print(column_count)
+        # print("====================")
+        # print("====================")
+        # print(list(self.model.named_parameters()))
+        # print("====================")
+        # print("====================")
+
         X_val = torch.tensor(X_val).float()
 
         y = torch.tensor(y)
@@ -79,9 +101,39 @@ class BaseModelTorch(BaseModel):
                 loss = loss_func(out, batch_y.to(self.device))
                 loss_history.append(loss.item())
 
+                first_layer_name = "input_layer.weight"
                 optimizer.zero_grad()
                 loss.backward()
+
+                # _old_train_x_data = batch_X
+
+                # Modify gradients
+                if self.gce[0]:
+                    # print("GCEEEEEEEEEEEEEEEEE")
+                    old_params = []
+                    for name, param in self.model.named_parameters():
+                        if name == first_layer_name:
+                            factors = torch.ones(column_count, param.grad.shape[0], device=param.grad.device)
+                            for i in range(column_count):
+                                real_count = 0
+                                for observation in batch_X:
+                                    real_count += observation[i]
+                                if real_count > 0:
+                                    factors[i] = (self.args.batch_size / (1.0 * real_count)) * factors[i]
+
+                            # print("ooo")
+                            # print(factors)
+                            # print("ooo")
+                            param.grad = torch.mul(param.grad, torch.transpose(factors, 0, 1))
+                            old_params.append(deepcopy(param))
+
                 optimizer.step()
+                if self.gce[0]:
+                    i = 0
+                    for name, param in self.model.named_parameters():
+                        if name == first_layer_name:
+                            param = torch.where(param.grad == 0, old_params[i], param)
+                            i += 1
 
             # Early Stopping
             val_loss = 0.0

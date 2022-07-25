@@ -16,7 +16,8 @@ class MLP(BaseModelTorch):
         super().__init__(params, args)
 
         self.model = MLP_Model(n_layers=self.params["n_layers"], input_dim=self.args.num_features,
-                               hidden_dim=self.params["hidden_dim"], output_dim=self.args.num_classes,
+                               hidden_dim=8, # self.params["hidden_dim"],
+                               output_dim=self.args.num_classes,
                                task=self.args.objective)
 
         self.to_device()

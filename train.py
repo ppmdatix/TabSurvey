@@ -56,7 +56,8 @@ def cross_validation(model, X, y, args, save_model=False):
         # Compute scores on the output
         sc.eval(y_test, curr_model.predictions, curr_model.prediction_probabilities)
 
-        print(sc.get_results())
+        # print(sc.get_results())
+
 
     # Best run is saved to file
     if save_model:
@@ -131,8 +132,13 @@ def main_once(args):
     model = model_name(parameters, args)
 
     sc, time = cross_validation(model, X, y, args)
-    print(sc.get_results())
-    print(time)
+
+    print("Last Accuracy")
+    results = sc.get_results()
+    print(str(results['Accuracy - mean']) + " +- " + str(results['Accuracy - std']))
+    print("ooooooooooooo")
+    # print(sc.get_results())
+    # print(time)
 
 
 if __name__ == "__main__":
