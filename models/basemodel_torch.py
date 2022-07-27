@@ -23,8 +23,8 @@ class BaseModelTorch(BaseModel):
         if self.args.data_parallel:
             self.model = nn.DataParallel(self.model, device_ids=self.args.gpu_ids)
 
-        print("On Device:", self.device)
-        self.model.to(self.device)
+        # print("On Device:", self.device)
+        # self.model.to(self.device)
 
     def get_device(self):
         device = 'cuda'
@@ -88,12 +88,12 @@ class BaseModelTorch(BaseModel):
         for epoch in range(self.args.epochs):
             for i, (batch_X, batch_y) in enumerate(train_loader):
 
-                out = self.model(batch_X.to(self.device))
+                out = self.model(batch_X)
 
                 if self.args.objective == "regression" or self.args.objective == "binary":
                     out = out.squeeze()
 
-                loss = loss_func(out, batch_y.to(self.device))
+                loss = loss_func(out, batch_y)
                 loss_history.append(loss.item())
 
                 optimizer.zero_grad()
@@ -133,12 +133,12 @@ class BaseModelTorch(BaseModel):
             val_loss = 0.0
             val_dim = 0
             for val_i, (batch_val_X, batch_val_y) in enumerate(val_loader):
-                out = self.model(batch_val_X.to(self.device))
+                out = self.model(batch_val_X)
 
                 if self.args.objective == "regression" or self.args.objective == "binary":
                     out = out.squeeze()
 
-                val_loss += loss_func(out, batch_val_y.to(self.device))
+                val_loss += loss_func(out, batch_val_y)
                 val_dim += 1
 
             val_loss /= val_dim
@@ -191,7 +191,7 @@ class BaseModelTorch(BaseModel):
         predictions = []
         with torch.no_grad():
             for batch_X in test_loader:
-                preds = self.model(batch_X[0].to(self.device))
+                preds = self.model(batch_X[0])
 
                 if self.args.objective == "binary":
                     preds = torch.sigmoid(preds)
