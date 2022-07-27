@@ -1,11 +1,11 @@
 #!/bin/bash
 
-N_TRIALS=2
-EPOCHS=3
+N_TRIALS=3
+EPOCHS=20
 
 SKLEARN_ENV="sklearn"
 GBDT_ENV="gbdt"
-TORCH_ENV="torch"
+TORCH_ENV="rBatch"
 KERAS_ENV="tensorflow"
 
 # "LinearModel" "KNN" "DecisionTree" "RandomForest"
@@ -14,15 +14,17 @@ KERAS_ENV="tensorflow"
 # MODELS=( "LinearModel" "KNN" "DecisionTree" "RandomForest" "XGBoost" "CatBoost" "LightGBM" "MLP" "TabNet" "VIME")
 
 declare -A MODELS
-MODELS=( ["LinearModel"]=$SKLEARN_ENV
+MODELS=(
+         ["XGBoost"]=$GBDT_ENV
+         ["CatBoost"]=$GBDT_ENV
+         ["MLP"]=$TORCH_ENV
+
+         ["LinearModel"]=$SKLEARN_ENV
          ["KNN"]=$SKLEARN_ENV
          # ["SVM"]=$SKLEARN_ENV
          ["DecisionTree"]=$SKLEARN_ENV
          ["RandomForest"]=$SKLEARN_ENV
-         ["XGBoost"]=$GBDT_ENV
-         ["CatBoost"]=$GBDT_ENV
          ["LightGBM"]=$GBDT_ENV
-         ["MLP"]=$TORCH_ENV
          ["TabNet"]=$TORCH_ENV
          ["VIME"]=$TORCH_ENV
          ["TabTransformer"]=$TORCH_ENV
@@ -39,9 +41,9 @@ MODELS=( ["LinearModel"]=$SKLEARN_ENV
           )
 
 CONFIGS=( "config/adult.yml"
-          "config/covertype.yml"
-          "config/california_housing.yml"
-          "config/higgs.yml"
+          # "config/covertype.yml"
+          # "config/california_housing.yml"
+          #"config/higgs.yml"
           )
 
 # conda init bash

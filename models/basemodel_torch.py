@@ -43,23 +43,18 @@ class BaseModelTorch(BaseModel):
         column_count = len(oldX[0])
 
 
+        first_layer_name = "input_layer.weight"
+        print("oooooooooooooooooooooooo")
+        print("oooooooooooooooooooooooo")
+        print("oooooooooooooooooooooooo")
+        print("oooooooooooooooooooooooo")
+        first_layer_name = next(name for name, _ in list(self.model.named_parameters()) if "input" in name and "weight" in name)
+        print(first_layer_name)
+
         optimizer = optim.AdamW(self.model.parameters(), lr=self.params["learning_rate"])
 
         X = torch.tensor(oldX).float()
         print(self.model)
-        # print("====================")
-        # print("====================")
-        # print("====================")
-        # print("====================")
-        # print(type(X))
-        # print("====================")
-        # print("======column_count==========")
-        # print(column_count)
-        # print("====================")
-        # print("====================")
-        # print(list(self.model.named_parameters()))
-        # print("====================")
-        # print("====================")
 
         X_val = torch.tensor(X_val).float()
 
@@ -101,7 +96,6 @@ class BaseModelTorch(BaseModel):
                 loss = loss_func(out, batch_y.to(self.device))
                 loss_history.append(loss.item())
 
-                first_layer_name = "input_layer.weight"
                 optimizer.zero_grad()
                 loss.backward()
 
