@@ -56,6 +56,7 @@ def load_data(args):
 
 
         localPathData = "C:/Users/PaulPeseux/RelationalBatch/data/Adult_Income/training_processed.csv"
+        localPathData = "data/training_processed.csv"
         df = pd.read_csv(localPathData)
         print("One hot encoded dataset is loaded")
 
