@@ -46,6 +46,7 @@ def get_parser():
     parser.add('--cat_dims', type=int, action="append", help="Cardinality of the categorical features (is set "
                                                              "automatically, when the load_data function is used.")
     parser.add('--gce', type=bool, action="append", help="Use GCE?")
+    parser.add('--hidden_dim', type=int, action="append", help="Use hidden_dim?")
 
     # Todo: Validate the arguments
 

@@ -16,7 +16,7 @@ class MLP(BaseModelTorch):
         super().__init__(params, args)
 
         self.model = MLP_Model(n_layers=self.params["n_layers"], input_dim=self.args.num_features,
-                               hidden_dim=8, # self.params["hidden_dim"],
+                               hidden_dim=self.args.hidden_dim[0], # self.params["hidden_dim"], # self.params["hidden_dim"],
                                output_dim=self.args.num_classes,
                                task=self.args.objective)
 
@@ -35,7 +35,7 @@ class MLP(BaseModelTorch):
     @classmethod
     def define_trial_parameters(cls, trial, args):
         params = {
-            "hidden_dim": trial.suggest_int("hidden_dim", 10, 100),
+            "hidden_dim": args.hidden_dim,
             "n_layers": trial.suggest_int("n_layers", 2, 5),
             "learning_rate": trial.suggest_float("learning_rate", 0.0005, 0.001)
         }
