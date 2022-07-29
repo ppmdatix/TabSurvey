@@ -47,7 +47,7 @@ def get_parser():
                                                              "automatically, when the load_data function is used.")
     parser.add('--gce', type=bool, action="append", help="Use GCE?")
     parser.add('--hidden_dim', type=int, action="append", help="Use hidden_dim?")
-    parser.add('--one_hot_endoded_data', type=bool, action="append", help="Use one_hot_endoded_data?")
+    parser.add('--one_hot_encoded_data', type=bool, action="append", help="Use one_hot_endoded_data?")
 
     # Todo: Validate the arguments
 
