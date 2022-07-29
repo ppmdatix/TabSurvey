@@ -54,28 +54,33 @@ def load_data(args):
     elif args.dataset == "Adult" or args.dataset == "AdultCat":  # Binary classification dataset with categorical data, if you pass AdultCat, the numerical columns will be discretized.
         url_data = "https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data"
 
-
-        localPathData = "C:/Users/PaulPeseux/RelationalBatch/data/Adult_Income/training_processed.csv"
-        localPathData = "data/training_processed.csv"
-        df = pd.read_csv(localPathData)
-        print("One hot encoded dataset is loaded")
-
-        def isRich(val):
-            result = 0
-            if val == ">50K":
-                result =  1
-            return result
-
         label = "income"
-        df[label] = df['target'].apply(isRich)
-        df = df.drop('target', axis=1)
-        features = list(df.columns)
-        features.remove(label)
 
-        # features = ['age', 'workclass', 'fnlwgt', 'education', 'education_num', 'marital-status', 'occupation',
-        #             'relationship', 'race', 'sex', 'capital-gain', 'capital-loss', 'hours-per-week', 'native-country']
-        # columns = features + [label]
-        # df = pd.read_csv(url_data, names=columns)
+        if args.one_hot_encoded_data:
+
+            localPathData = "C:/Users/PaulPeseux/RelationalBatch/data/Adult_Income/training_processed.csv"
+            localPathData = "data/training_processed.csv"
+            df = pd.read_csv(localPathData)
+            print("One hot encoded dataset is loaded")
+
+            def isRich(val):
+                result = 0
+                if val == ">50K":
+                    result =  1
+                return result
+
+            df[label] = df['target'].apply(isRich)
+            df = df.drop('target', axis=1)
+            features = list(df.columns)
+            features.remove(label)
+
+        else:
+            features = ['age', 'workclass', 'fnlwgt', 'education', 'education_num', 'marital-status', 'occupation',
+                        'relationship', 'race', 'sex', 'capital-gain', 'capital-loss', 'hours-per-week', 'native-country']
+            columns = features + [label]
+            df = pd.read_csv(url_data, names=columns)
+
+
 
         # Fill NaN with something better?
         df.fillna(0, inplace=True)

@@ -23,6 +23,7 @@ seed: 221 # Don't change
 scale: True
 target_encode: True
 one_hot_encode: False
+one_hot_encoded_data: False
 
 # Training parameters
 batch_size: 128
