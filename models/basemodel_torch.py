@@ -135,6 +135,10 @@ class BaseModelTorch(BaseModel):
             for val_i, (batch_val_X, batch_val_y) in enumerate(val_loader):
                 out = self.model(batch_val_X)
 
+                print("===== OUT =====")
+                print(out)
+                print("===== OUT =====")
+
                 if self.args.objective == "regression" or self.args.objective == "binary":
                     out = out.squeeze()
 

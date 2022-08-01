@@ -56,6 +56,10 @@ def load_data(args):
 
         label = "income"
 
+        print("xxxxxxxxxxxxxxxxxxx")
+        print(args.one_hot_encoded_data)
+        print("xxxxxxxxxxxxxxxxxxx")
+
         if args.one_hot_encoded_data[0]:
 
             localPathData = "C:/Users/PaulPeseux/RelationalBatch/data/Adult_Income/training_processed.csv"
